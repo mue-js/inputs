@@ -1,21 +1,15 @@
-import { FC, useId, useState, useEffect } from 'react'
-import {  useWatch } from 'react-hook-form'
-import { useGridify } from '@mue-js/react'
 import { Eye, EyeClosed } from '@mue-js/icons'
+import { FC, useEffect, useId, useState } from 'react'
+import { RegisterOptions, UseFormReturn, useWatch } from 'react-hook-form'
 
 import { Input } from '../../../types'
+import { useGridify } from '@mue-js/react/'
 
-interface Form {
-    rules,
-    formState: { errors },
-    control = () => null,
-    register,
-}
-
-export interface InputTextProps extends Input {
+export interface InputTextProps extends Input, UseFormReturn {
     validIfNoErrors?: boolean
     helper?: string
     maxCharacters?: number
+    options: RegisterOptions
 }
 
 const InputText: FC<InputTextProps> = ({
@@ -34,9 +28,9 @@ const InputText: FC<InputTextProps> = ({
     helper,
     maxCharacters,
     // form
-    rules,
+    options,
     formState: { errors },
-    control = () => null,
+    control,
     register,
     // grid props
     ...props
@@ -74,7 +68,7 @@ const InputText: FC<InputTextProps> = ({
                 className,
                 !value && 'empty',
                 error && 'invalid',
-                validIfNoErrors && !error && rules && rules !== {} && 'valid',
+                validIfNoErrors && !error && 'valid',
                 (disabled || readOnly) && 'disabled',
             ]
                 .filter(e => e)
@@ -96,24 +90,17 @@ const InputText: FC<InputTextProps> = ({
                     defaultValue={defaultValue}
                     readOnly={readOnly}
                     disabled={disabled}
-                    {...register(name, rules)}
+                    {...register(name, options)}
                 />
 
                 {_type === 'password' &&
                     (type === 'password' ? (
-                        <button type="button"
-                            onClick={() => setType('text')}>
-
-                        <EyeClosed
-                            className="input-icon absolute pointer"
-                            />
-                            </button>
+                        <button type="button" onClick={() => setType('text')}>
+                            <EyeClosed className="input-icon absolute pointer" />
+                        </button>
                     ) : (
-                        <button type="button"
-                            onClick={() => setType('password')}>
-                            <Eye
-                                className="input-icon absolute pointer"
-                                />
+                        <button type="button" onClick={() => setType('password')}>
+                            <Eye className="input-icon absolute pointer" />
                         </button>
                     ))}
             </div>
